@@ -1,0 +1,107 @@
+# ---------------------------------------------------------------------------
+# AegisOps .gitignore
+# Covers: Node/Next.js, Python/FastAPI/pytest, Docker/local DB, env/secrets,
+# IDE/editor, OS files, build artifacts, caches, coverage, and logs.
+# ---------------------------------------------------------------------------
+
+# ===== Environment files & secrets =====
+# Never commit real environment files. Only *.example templates are tracked.
+# Ignore the base .env and all environment variants...
+.env
+.env.local
+.env.development
+.env.production
+.env.test
+.env.*
+# ...but always keep the tracked example templates (root and per-service).
+!.env.example
+!**/.env.example
+!backend/.env.example
+!frontend/.env.example
+secrets.json
+*.pem
+*.key
+*.crt
+*.p12
+*.pfx
+credentials.json
+.azure/
+
+# ===== Node / Next.js / npm =====
+node_modules/
+.next/
+out/
+.turbo/
+.vercel/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+.eslintcache
+*.tsbuildinfo
+next-env.d.ts
+
+# ===== Python / FastAPI / pytest =====
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg
+*.egg-info/
+.eggs/
+build/
+dist/
+.venv/
+venv/
+env/
+ENV/
+.python-version
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.pytype/
+.tox/
+.nox/
+htmlcov/
+.coverage
+.coverage.*
+coverage.xml
+*.cover
+nosetests.xml
+.hypothesis/
+
+# ===== Docker & local database =====
+*.pid
+pgdata/
+postgres-data/
+db-data/
+docker-data/
+*.sqlite
+*.sqlite3
+*.db
+
+# ===== IDE / editor =====
+.vscode/
+!.vscode/extensions.json
+.idea/
+*.iml
+*.swp
+*.swo
+*~
+.history/
+
+# ===== OS files =====
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# ===== Logs & misc =====
+*.log
+logs/
+tmp/
+temp/
+.cache/
