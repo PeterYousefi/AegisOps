@@ -93,3 +93,13 @@ def get_engine():
 def get_sessionmaker() -> sessionmaker:
     """Return a cached session factory bound to the engine."""
     return sessionmaker(bind=get_engine(), autoflush=False, expire_on_commit=False)
+
+
+def get_db():
+    """FastAPI dependency yielding a database session (closed after the request)."""
+    session_factory = get_sessionmaker()
+    session = session_factory()
+    try:
+        yield session
+    finally:
+        session.close()
