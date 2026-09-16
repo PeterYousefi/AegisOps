@@ -18,6 +18,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.api.v1.router import api_router
 from app.core.config import Settings, get_settings
 from app.core.logging import configure_logging, correlation_id_var, get_logger
+from app.shared.errors import register_exception_handlers
 
 
 def create_app(settings: Settings | None = None) -> FastAPI:
@@ -69,6 +70,8 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             correlation_id_var.reset(token)
         response.headers["X-Correlation-ID"] = correlation_id
         return response
+
+    register_exception_handlers(app)
 
     app.include_router(api_router, prefix=settings.api_v1_prefix)
 
