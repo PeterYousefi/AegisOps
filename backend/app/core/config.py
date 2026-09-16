@@ -50,6 +50,17 @@ class Settings(BaseSettings):
         alias="CORS_ORIGINS",
     )
 
+    # --- Database connection parts (assembled into a URL in shared.db) ---
+    # Safe local defaults. Credentials are never hard-coded; production values
+    # come from the environment / Key Vault. Never logged.
+    postgres_user: str = Field(default="aegisops", alias="POSTGRES_USER")
+    # Non-secret local-development default only; real values come from the
+    # environment / Key Vault and are never committed.
+    postgres_password: str = Field(default="local-dev-only", alias="POSTGRES_PASSWORD")
+    postgres_db: str = Field(default="aegisops", alias="POSTGRES_DB")
+    postgres_host: str = Field(default="localhost", alias="POSTGRES_HOST")
+    postgres_port: int = Field(default=5432, alias="POSTGRES_PORT")
+
     @field_validator("cors_origins", mode="before")
     @classmethod
     def _split_cors_origins(cls, value: object) -> object:
