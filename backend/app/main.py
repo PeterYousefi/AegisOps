@@ -39,6 +39,11 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         openapi_url="/openapi.json",
     )
 
+    # Make the resolved settings authoritative for this app instance so routes
+    # use the injected configuration (important for tests) rather than the
+    # cached global settings.
+    app.state.settings = settings
+
     app.add_middleware(
         CORSMiddleware,
         allow_origins=settings.cors_origins,
