@@ -23,8 +23,8 @@ AC-* references map to acceptance criteria in `requirements.md §7`.
 - Verify: `git status && grep -rIn "PLACEHOLDER\|example" .env.example && find . -maxdepth 2 -type d`.
 
 ### T1.2 Backend app factory, config, health endpoint
-- Goal: FastAPI app factory (`main.py`), env-driven settings (`config.py` via pydantic-settings), `/health` route, structured JSON logging + correlation-id middleware skeleton, `pyproject.toml` with pinned deps + `requirements.lock`.
-- Files: `backend/app/main.py`, `backend/app/config.py`, `backend/app/shared/{logging,correlation,errors}.py`, `backend/pyproject.toml`, `backend/requirements.lock`, `backend/.env.example`.
+- Goal: FastAPI app factory (`main.py`), env-driven settings (`config.py` via pydantic-settings), `/health` route, structured JSON logging + correlation-id middleware skeleton, `pyproject.toml` with pinned deps + `requirements-pinned.txt`.
+- Files: `backend/app/main.py`, `backend/app/config.py`, `backend/app/shared/{logging,correlation,errors}.py`, `backend/pyproject.toml`, `backend/requirements-pinned.txt`, `backend/.env.example`.
 - Dependencies: T1.1.
 - Acceptance: `GET /health` returns 200 JSON (AC-1, partial); no secrets hard-coded (AC-2).
 - Tests: `tests/unit/test_health.py` (TestClient → 200 + JSON body).

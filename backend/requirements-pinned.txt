@@ -1,0 +1,24 @@
+# AegisOps backend — pinned direct dependencies (T1.2 foundation)
+#
+# This is a hand-maintained list of the DIRECT dependencies, pinned to exact
+# versions, mirroring backend/pyproject.toml. Install with:
+#
+#     pip install -r requirements-pinned.txt
+#
+# IMPORTANT: This file is intentionally NOT a fully resolved transitive lock
+# file. It pins only the top-level dependencies, not their transitive
+# sub-dependencies. A true lock file (with the complete resolved dependency
+# tree and hashes) will be generated LATER on Python 3.12 — e.g. via
+# `pip-compile` (pip-tools) or `uv pip compile` — during the dependency
+# installation / CI task. It was not generated here to avoid resolving against
+# the mismatched local Python interpreter (system Python is 3.9).
+
+# --- Runtime ---
+fastapi==0.115.6
+uvicorn[standard]==0.34.0
+pydantic==2.10.4
+pydantic-settings==2.7.1
+
+# --- Development / testing ---
+pytest==8.3.4
+httpx==0.28.1
