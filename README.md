@@ -27,6 +27,36 @@ base MVP.
 - Task plan: [`.kiro/specs/aegisops/tasks.md`](.kiro/specs/aegisops/tasks.md)
 - Architecture: [`docs/architecture.md`](docs/architecture.md)
 
+## Backend foundation
+
+A minimal FastAPI backend now exists under `backend/` using an app-factory
+pattern with typed configuration and a structured JSON logging baseline.
+
+**Currently available endpoint:**
+
+```text
+GET /api/v1/health  ->  200 {"status":"ok","service":"aegisops-api","environment":"local"}
+```
+
+The `environment` value comes from the `APP_ENV` setting. No database, AI
+provider, or external integration is wired yet (those are later tasks).
+
+**Intended local run and test commands** (requires **Python 3.12+**;
+dependencies are installed in a later task and are not required just to read
+the code):
+
+```bash
+cd backend
+python3.12 -m venv .venv && source .venv/bin/activate
+pip install -e ".[dev]"                 # or: pip install -r requirements-pinned.txt
+pytest                                   # run the backend tests
+uvicorn app.main:app --reload            # run the API locally on http://localhost:8000
+```
+
+`requirements-pinned.txt` pins the direct dependencies only. A fully resolved
+transitive lock file will be generated later on Python 3.12 (e.g. via
+`pip-compile` or `uv pip compile`) during the dependency/CI task.
+
 ## Repository layout
 
 ```

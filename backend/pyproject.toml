@@ -1,0 +1,32 @@
+[project]
+name = "aegisops-backend"
+version = "0.1.0"
+description = "AegisOps backend — Human-Governed AI Incident Response for Cloud Operations"
+requires-python = ">=3.12"
+license = { text = "MIT" }
+
+# Only the dependencies needed for the T1.2 foundation are included here.
+# Database, AI provider, and integration dependencies are added in later tasks.
+dependencies = [
+    "fastapi==0.115.6",
+    "uvicorn[standard]==0.34.0",
+    "pydantic==2.10.4",
+    "pydantic-settings==2.7.1",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest==8.3.4",
+    "httpx==0.28.1",
+]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["app"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"

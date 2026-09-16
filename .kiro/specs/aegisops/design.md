@@ -139,7 +139,7 @@ AegisOps/
 │       └── __tests__/
 │
 ├── backend/
-│   ├── pyproject.toml / requirements.lock / .env.example / Dockerfile
+│   ├── pyproject.toml / requirements-pinned.txt / .env.example / Dockerfile
 │   ├── alembic.ini / migrations/
 │   ├── seed/seed_data.py
 │   ├── tests/ (unit/ integration/)
