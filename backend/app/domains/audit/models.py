@@ -8,11 +8,11 @@ certified logging system.
 
 from __future__ import annotations
 
-from sqlalchemy import Enum, ForeignKey, String
+from sqlalchemy import ForeignKey, String
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column
 
-from app.shared.db import Base, TimestampMixin, UUIDPrimaryKeyMixin
+from app.shared.db import Base, TimestampMixin, UUIDPrimaryKeyMixin, str_enum
 from app.shared.enums import ActorType, AuditEventType
 
 
@@ -25,10 +25,10 @@ class AuditEvent(UUIDPrimaryKeyMixin, TimestampMixin, Base):
         String(36), ForeignKey("incidents.id", ondelete="SET NULL"), nullable=True, index=True
     )
     event_type: Mapped[AuditEventType] = mapped_column(
-        Enum(AuditEventType, native_enum=False, length=48), nullable=False
+        str_enum(AuditEventType, length=48), nullable=False
     )
     actor_type: Mapped[ActorType] = mapped_column(
-        Enum(ActorType, native_enum=False, length=16), nullable=False
+        str_enum(ActorType, length=16), nullable=False
     )
     actor_id: Mapped[str] = mapped_column(String(255), nullable=False)
     previous_state: Mapped[str | None] = mapped_column(String(32), nullable=True)

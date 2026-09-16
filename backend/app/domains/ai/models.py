@@ -2,11 +2,11 @@
 
 from __future__ import annotations
 
-from sqlalchemy import Enum, Float, ForeignKey, String, Text
+from sqlalchemy import Float, ForeignKey, String, Text
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column
 
-from app.shared.db import Base, TimestampMixin, UUIDPrimaryKeyMixin
+from app.shared.db import Base, TimestampMixin, UUIDPrimaryKeyMixin, str_enum
 from app.shared.enums import Severity, ValidationStatus
 
 
@@ -21,7 +21,7 @@ class IncidentAssessment(UUIDPrimaryKeyMixin, TimestampMixin, Base):
     provider: Mapped[str] = mapped_column(String(64), nullable=False)
     executive_summary: Mapped[str] = mapped_column(Text, nullable=False)
     severity: Mapped[Severity] = mapped_column(
-        Enum(Severity, native_enum=False, length=16), nullable=False
+        str_enum(Severity, length=16), nullable=False
     )
     affected_services: Mapped[list] = mapped_column(JSONB, nullable=False, default=list)
     likely_root_cause: Mapped[str] = mapped_column(Text, nullable=False)
@@ -32,7 +32,7 @@ class IncidentAssessment(UUIDPrimaryKeyMixin, TimestampMixin, Base):
     uncertainties: Mapped[list] = mapped_column(JSONB, nullable=False, default=list)
     safety_notes: Mapped[list] = mapped_column(JSONB, nullable=False, default=list)
     validation_status: Mapped[ValidationStatus] = mapped_column(
-        Enum(ValidationStatus, native_enum=False, length=32), nullable=False
+        str_enum(ValidationStatus, length=32), nullable=False
     )
 
 

@@ -12,7 +12,9 @@ import datetime as _dt
 import uuid
 from functools import lru_cache
 
-from sqlalchemy import DateTime, String, create_engine
+from enum import Enum as _PyEnum
+
+from sqlalchemy import DateTime, Enum, String, create_engine
 from sqlalchemy.orm import (
     DeclarativeBase,
     Mapped,
@@ -26,6 +28,21 @@ from app.core.config import get_settings
 
 class Base(DeclarativeBase):
     """Declarative base for all ORM models."""
+
+
+def str_enum(enum_cls: type[_PyEnum], length: int = 32) -> Enum:
+    """A portable string-enum column type.
+
+    Stores the enum *value* (e.g. "alert"), not its member name, using a
+    VARCHAR + CHECK constraint (native_enum=False) for easy migration across
+    databases.
+    """
+    return Enum(
+        enum_cls,
+        native_enum=False,
+        length=length,
+        values_callable=lambda e: [member.value for member in e],
+    )
 
 
 class UUIDPrimaryKeyMixin:
