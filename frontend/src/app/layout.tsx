@@ -8,6 +8,12 @@ export const metadata: Metadata = {
   title: "AegisOps — Human-Governed AI Incident Response",
   description:
     "AI-assisted, human-approved, fully audited incident response for cloud operations.",
+  openGraph: {
+    title: "AegisOps — Human-Governed AI Incident Response",
+    description:
+      "AI-assisted, human-approved, fully audited incident response for cloud operations.",
+    type: "website",
+  },
 };
 
 export default function RootLayout({

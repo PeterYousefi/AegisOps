@@ -13,6 +13,8 @@ complete, append-only audit trail.
 > **explicit human approval**. The base app contacts **no real** Azure,
 > Salesforce, email, Slack, or deployment systems.
 
+![AegisOps incident dashboard](docs/screenshots/02-dashboard.png)
+
 ## 1. Product overview
 
 AegisOps is an operational workflow product — not a chatbot. It has a real
@@ -198,11 +200,21 @@ See [`docs/interview-talking-points.md`](docs/interview-talking-points.md).
 
 ## 19. Screenshots and demo video
 
-_Add screenshots of the incident list and detail pages, and a 2–3 minute demo
-video, here._
+**Incident dashboard** — summary stats, severity accents, status filters:
 
-- `![Incident list](docs/screenshots/incident-list.png)` _(placeholder)_
-- `![Incident detail](docs/screenshots/incident-detail.png)` _(placeholder)_
+![Incident dashboard](docs/screenshots/02-dashboard.png)
+
+**Incident detail** — workflow stepper, evidence, AI assessment with clickable
+citations, remediation proposal, simulated remediation, and the append-only
+audit timeline:
+
+![Incident detail](docs/screenshots/04-incident-mitigated.png)
+
+**Landing page:**
+
+![Landing page](docs/screenshots/01-landing.png)
+
+_A 2–3 minute demo video can be recorded following `docs/demo-script.md`._
 
 ## 20. License
 

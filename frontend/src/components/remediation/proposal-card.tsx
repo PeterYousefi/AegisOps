@@ -8,11 +8,34 @@ const RISK_STYLES: Record<string, string> = {
   high: "bg-red-100 text-red-800",
 };
 
+const RISK_LEVEL: Record<string, number> = { low: 1, medium: 2, high: 3 };
+const RISK_FILL: Record<string, string> = {
+  low: "bg-green-500",
+  medium: "bg-amber-500",
+  high: "bg-red-500",
+};
+
+function RiskGauge({ level }: { level: string }) {
+  const active = RISK_LEVEL[level] ?? 0;
+  return (
+    <div className="flex items-center gap-1" aria-label={`Risk: ${level}`}>
+      {[1, 2, 3].map((seg) => (
+        <span
+          key={seg}
+          className={`h-1.5 w-5 rounded-full ${
+            seg <= active ? RISK_FILL[level] : "bg-slate-200"
+          }`}
+        />
+      ))}
+    </div>
+  );
+}
+
 function Field({ label, value }: { label: string; value: string }) {
   return (
     <div>
-      <dt className="text-xs font-semibold uppercase text-gray-500">{label}</dt>
-      <dd className="mt-0.5 text-sm text-gray-800">{value}</dd>
+      <dt className="text-xs font-semibold uppercase text-slate-500">{label}</dt>
+      <dd className="mt-0.5 text-sm text-slate-800">{value}</dd>
     </div>
   );
 }
@@ -20,9 +43,9 @@ function Field({ label, value }: { label: string; value: string }) {
 /** Renders a remediation proposal with all decision-relevant fields. */
 export function ProposalCard({ proposal }: { proposal: Proposal }) {
   return (
-    <div className="space-y-3 rounded-lg border border-gray-200 p-4">
+    <div className="space-y-3 rounded-xl border border-slate-200 bg-slate-50/50 p-4">
       <div className="flex flex-wrap items-center gap-2">
-        <span className="font-medium text-gray-900">
+        <span className="font-semibold text-slate-900">
           {humanize(proposal.action_type)}
         </span>
         <span
@@ -32,7 +55,8 @@ export function ProposalCard({ proposal }: { proposal: Proposal }) {
         >
           {proposal.risk_level} risk
         </span>
-        <span className="rounded-full bg-gray-100 px-2 py-0.5 text-xs text-gray-700">
+        <RiskGauge level={proposal.risk_level} />
+        <span className="ml-auto rounded-full bg-slate-200 px-2 py-0.5 text-xs text-slate-700">
           {humanize(proposal.status)}
         </span>
       </div>
