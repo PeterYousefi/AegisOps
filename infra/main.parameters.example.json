@@ -1,0 +1,21 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "namePrefix": {
+      "value": "aegisops"
+    },
+    "backendImage": {
+      "value": "PLACEHOLDER_ACR_LOGIN_SERVER/aegisops-backend:latest"
+    },
+    "frontendImage": {
+      "value": "PLACEHOLDER_ACR_LOGIN_SERVER/aegisops-frontend:latest"
+    },
+    "postgresAdminLogin": {
+      "value": "PLACEHOLDER_ADMIN_LOGIN"
+    },
+    "postgresAdminPassword": {
+      "value": "PROVIDE_SECURELY_AT_DEPLOY_TIME"
+    }
+  }
+}
