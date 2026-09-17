@@ -47,6 +47,19 @@ def get_incident_detail(session: Session, incident_id: str) -> dict:
     }
 
 
+def _next_reference(session: Session) -> str:
+    """Generate the next incident reference code, e.g. 'INC-1004'.
+
+    Uses a base offset so codes look established, plus the current incident
+    count. Uniqueness is enforced by the DB column; collisions are astronomically
+    unlikely for a demo but the unique constraint is the backstop.
+    """
+    from sqlalchemy import func, select
+
+    count = session.scalar(select(func.count()).select_from(Incident)) or 0
+    return f"INC-{1000 + count + 1}"
+
+
 def create_incident(
     session: Session,
     *,
@@ -57,6 +70,7 @@ def create_incident(
 ) -> Incident:
     """Create a new incident in the `detected` state and record an audit event."""
     incident = Incident(
+        reference=_next_reference(session),
         title=title,
         severity=severity,
         status=IncidentStatus.DETECTED,

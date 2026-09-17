@@ -92,7 +92,10 @@ export default function IncidentDetailPage({
       {state === "ready" && incident && (
         <div className="mt-4 space-y-6">
           <header className="card p-5">
-            <div className="flex flex-wrap items-center gap-2">
+            <div className="font-mono text-xs text-slate-400">
+              {incident.reference}
+            </div>
+            <div className="mt-1 flex flex-wrap items-center gap-2">
               <h1 className="text-2xl font-semibold tracking-tight">
                 {incident.title}
               </h1>
@@ -120,7 +123,11 @@ export default function IncidentDetailPage({
           </div>
 
           <div className="card p-5">
-            <AssessmentSection incidentId={incident.id} onAssessed={() => load()} />
+            <AssessmentSection
+              incidentId={incident.id}
+              evidence={incident.evidence}
+              onAssessed={() => load()}
+            />
           </div>
 
           <div className="card p-5">

@@ -41,7 +41,13 @@ function Field({ label, value }: { label: string; value: string }) {
 }
 
 /** Renders a remediation proposal with all decision-relevant fields. */
-export function ProposalCard({ proposal }: { proposal: Proposal }) {
+export function ProposalCard({
+  proposal,
+  evidenceLabels = {},
+}: {
+  proposal: Proposal;
+  evidenceLabels?: Record<string, string>;
+}) {
   return (
     <div className="space-y-3 rounded-xl border border-slate-200 bg-slate-50/50 p-4">
       <div className="flex flex-wrap items-center gap-2">
@@ -94,7 +100,7 @@ export function ProposalCard({ proposal }: { proposal: Proposal }) {
         proposal.runbook_references.length > 0) && (
         <div className="flex flex-wrap gap-1.5">
           {proposal.evidence_references.map((id) => (
-            <EvidenceCitation key={id} evidenceId={id} />
+            <EvidenceCitation key={id} evidenceId={id} label={evidenceLabels[id]} />
           ))}
           {proposal.runbook_references.map((id) => (
             <RunbookCitation key={id} runbookId={id} />

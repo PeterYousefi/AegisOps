@@ -19,7 +19,13 @@ function List({ title, items }: { title: string; items: string[] }) {
 }
 
 /** Renders an AI assessment with clickable evidence citations. */
-export function AssessmentPanel({ assessment }: { assessment: Assessment }) {
+export function AssessmentPanel({
+  assessment,
+  evidenceLabels = {},
+}: {
+  assessment: Assessment;
+  evidenceLabels?: Record<string, string>;
+}) {
   const isFallback = assessment.validation_status === "invalid_fallback";
   return (
     <div className="space-y-4 rounded-lg border border-gray-200 p-4">
@@ -68,7 +74,7 @@ export function AssessmentPanel({ assessment }: { assessment: Assessment }) {
           <h3 className="text-sm font-semibold text-gray-800">Citations</h3>
           <div className="mt-1 flex flex-wrap gap-1.5">
             {assessment.evidence_references.map((id) => (
-              <EvidenceCitation key={id} evidenceId={id} />
+              <EvidenceCitation key={id} evidenceId={id} label={evidenceLabels[id]} />
             ))}
             {assessment.runbook_references.map((id) => (
               <RunbookCitation key={id} runbookId={id} />

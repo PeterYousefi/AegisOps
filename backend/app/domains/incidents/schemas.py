@@ -44,6 +44,7 @@ class IncidentSummary(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     id: str
+    reference: str
     title: str
     severity: Severity
     status: IncidentStatus

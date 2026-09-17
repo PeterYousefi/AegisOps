@@ -18,6 +18,7 @@ export function IncidentTable({ incidents }: { incidents: IncidentSummary[] }) {
       <table className="w-full border-collapse text-left text-sm">
         <thead>
           <tr className="border-b border-slate-200 bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
+            <th className="px-4 py-2.5 font-medium">Ref</th>
             <th className="px-4 py-2.5 font-medium">Incident</th>
             <th className="px-4 py-2.5 font-medium">Severity</th>
             <th className="px-4 py-2.5 font-medium">Status</th>
@@ -32,6 +33,11 @@ export function IncidentTable({ incidents }: { incidents: IncidentSummary[] }) {
               key={incident.id}
               className={`border-b border-l-4 border-slate-100 ${ACCENT[incident.severity]} last:border-b-0 hover:bg-slate-50`}
             >
+              <td className="px-4 py-3">
+                <span className="font-mono text-xs text-slate-500">
+                  {incident.reference}
+                </span>
+              </td>
               <td className="px-4 py-3">
                 <Link
                   href={`/incidents/${incident.id}`}

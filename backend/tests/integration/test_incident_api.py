@@ -49,7 +49,7 @@ def test_list_incidents_returns_all(client: TestClient) -> None:
     resp = client.get(f"{API}/incidents")
     assert resp.status_code == 200
     body = resp.json()
-    assert len(body) == 3
+    assert len(body) == 6
 
 
 def test_list_incidents_filter_by_status(client: TestClient) -> None:

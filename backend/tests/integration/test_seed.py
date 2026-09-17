@@ -76,7 +76,7 @@ def test_seed_loads_primary_incident_and_runbooks() -> None:
 
         # Three incidents total (1 primary + 2 filler).
         incident_count = session.scalar(select(func.count()).select_from(Incident))
-        assert incident_count == 3
+        assert incident_count == 6
 
 
 def test_seed_is_idempotent() -> None:
@@ -87,7 +87,7 @@ def test_seed_is_idempotent() -> None:
     session_factory = get_sessionmaker()
     with session_factory() as session:
         assert session.scalar(select(func.count()).select_from(Runbook)) == 3
-        assert session.scalar(select(func.count()).select_from(Incident)) == 3
+        assert session.scalar(select(func.count()).select_from(Incident)) == 6
         evidence_count = session.scalar(
             select(func.count())
             .select_from(EvidenceRecord)

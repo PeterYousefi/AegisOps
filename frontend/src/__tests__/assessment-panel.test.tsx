@@ -26,8 +26,8 @@ describe("AssessmentPanel", () => {
     render(<AssessmentPanel assessment={ASSESSMENT} />);
     expect(screen.getByText("Checkout failing after deploy.")).toBeInTheDocument();
     expect(screen.getByText(/85% confidence/)).toBeInTheDocument();
-    expect(screen.getByText(/evidence:ev-123/)).toBeInTheDocument();
-    expect(screen.getByText(/runbook:rb-456/)).toBeInTheDocument();
+    expect(screen.getByText(/evidence ev-123/)).toBeInTheDocument();
+    expect(screen.getByText(/runbook rb-456/)).toBeInTheDocument();
   });
 
   it("evidence citation scrolls to the referenced evidence element", () => {
@@ -38,7 +38,7 @@ describe("AssessmentPanel", () => {
     document.body.appendChild(target);
 
     render(<AssessmentPanel assessment={ASSESSMENT} />);
-    fireEvent.click(screen.getByText(/evidence:ev-123/));
+    fireEvent.click(screen.getByText(/evidence ev-123/));
     expect(target.scrollIntoView).toHaveBeenCalled();
 
     document.body.removeChild(target);
