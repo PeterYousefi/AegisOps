@@ -1,17 +1,14 @@
-/**
- * Minimal accessible loading spinner.
- */
+import { Loader2 } from "lucide-react";
+
+/** Minimal accessible loading spinner. */
 export function Spinner({ label = "Loading" }: { label?: string }) {
   return (
     <div
       role="status"
       aria-live="polite"
-      className="inline-flex items-center gap-2 text-sm text-gray-600"
+      className="inline-flex items-center gap-2 text-sm text-slate-500"
     >
-      <span
-        aria-hidden="true"
-        className="h-4 w-4 animate-spin rounded-full border-2 border-gray-300 border-t-gray-700"
-      />
+      <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
       <span>{label}</span>
     </div>
   );

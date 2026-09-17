@@ -3,9 +3,36 @@
 @tailwind utilities;
 
 :root {
-  color-scheme: light dark;
+  /* Light, professional palette. Indigo accent; neutral slate surfaces. */
+  --background: #f8fafc; /* slate-50 */
+  --surface: #ffffff;
+  --foreground: #0f172a; /* slate-900 */
+  --muted: #64748b; /* slate-500 */
+  --border: #e2e8f0; /* slate-200 */
+  --accent: #4f46e5; /* indigo-600 */
+}
+
+html,
+body {
+  background: var(--background);
+  color: var(--foreground);
 }
 
 body {
-  @apply bg-white text-gray-900 antialiased;
+  @apply antialiased;
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+}
+
+/* Subtle, reusable card surface. */
+.card {
+  @apply rounded-xl border border-slate-200 bg-white shadow-sm;
+}
+
+/* Smooth, understated transitions (no gratuitous animation). */
+@media (prefers-reduced-motion: no-preference) {
+  a,
+  button {
+    transition: background-color 0.15s ease, border-color 0.15s ease,
+      color 0.15s ease, box-shadow 0.15s ease;
+  }
 }
