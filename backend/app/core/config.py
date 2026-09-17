@@ -61,6 +61,19 @@ class Settings(BaseSettings):
     postgres_host: str = Field(default="localhost", alias="POSTGRES_HOST")
     postgres_port: int = Field(default=5432, alias="POSTGRES_PORT")
 
+    # --- AI provider selection ---
+    # "mock" (default, deterministic, no credentials) or "azure".
+    ai_provider: str = Field(default="mock", alias="AI_PROVIDER")
+
+    # --- Azure AI provider (only used when ai_provider == "azure") ---
+    # Empty by default; real values come from the environment / Key Vault.
+    azure_openai_endpoint: str = Field(default="", alias="AZURE_OPENAI_ENDPOINT")
+    azure_openai_deployment: str = Field(default="", alias="AZURE_OPENAI_DEPLOYMENT")
+    azure_openai_api_version: str = Field(
+        default="", alias="AZURE_OPENAI_API_VERSION"
+    )
+    azure_openai_api_key: str = Field(default="", alias="AZURE_OPENAI_API_KEY")
+
     @field_validator("cors_origins", mode="before")
     @classmethod
     def _split_cors_origins(cls, value: object) -> object:
