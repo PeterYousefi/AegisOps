@@ -8,7 +8,9 @@ from sqlalchemy.orm import Session
 from app.domains.incidents import service
 from app.domains.incidents.schemas import (
     AuditEventOut,
+    EvidenceCreate,
     EvidenceOut,
+    IncidentCreate,
     IncidentDetail,
     IncidentSummary,
 )
@@ -26,6 +28,35 @@ def list_incidents(
 ) -> list[IncidentSummary]:
     incidents = service.list_incidents(db, status=status, severity=severity)
     return [IncidentSummary.model_validate(i) for i in incidents]
+
+
+@router.post("", response_model=IncidentSummary, status_code=201)
+def create_incident(
+    body: IncidentCreate, db: Session = Depends(get_db)
+) -> IncidentSummary:
+    incident = service.create_incident(
+        db,
+        title=body.title,
+        severity=body.severity,
+        affected_service=body.affected_service,
+        assigned_operator=body.assigned_operator,
+    )
+    return IncidentSummary.model_validate(incident)
+
+
+@router.post("/{incident_id}/evidence", response_model=EvidenceOut, status_code=201)
+def add_evidence(
+    incident_id: str, body: EvidenceCreate, db: Session = Depends(get_db)
+) -> EvidenceOut:
+    evidence = service.add_evidence(
+        db,
+        incident_id,
+        evidence_type=body.evidence_type,
+        summary=body.summary,
+        source=body.source,
+        payload=body.payload,
+    )
+    return EvidenceOut.model_validate(evidence)
 
 
 @router.get("/{incident_id}", response_model=IncidentDetail)

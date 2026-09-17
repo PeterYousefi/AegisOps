@@ -10,6 +10,7 @@ import { Spinner } from "@/components/ui/spinner";
 import { IncidentCard } from "@/components/incidents/incident-card";
 import { IncidentTable } from "@/components/incidents/incident-table";
 import { StatCard } from "@/components/incidents/stat-card";
+import { NewIncidentDialog } from "@/components/incidents/new-incident-dialog";
 import {
   IncidentFilters,
   type IncidentFilterValue,
@@ -27,19 +28,23 @@ export default function IncidentsPage() {
   const [state, setState] = useState<LoadState>("loading");
   const [filters, setFilters] = useState<IncidentFilterValue>({});
 
-  useEffect(() => {
-    const controller = new AbortController();
+  const load = (signal?: AbortSignal) => {
     setState("loading");
-    getIncidents({}, controller.signal)
+    getIncidents({}, signal)
       .then((data) => {
         setIncidents(data);
         setState("ready");
       })
       .catch((err: unknown) => {
-        if (controller.signal.aborted) return;
+        if (signal?.aborted) return;
         setState("error");
         console.error("Failed to load incidents", err);
       });
+  };
+
+  useEffect(() => {
+    const controller = new AbortController();
+    load(controller.signal);
     return () => controller.abort();
   }, []);
 
@@ -66,11 +71,14 @@ export default function IncidentsPage() {
 
   return (
     <div className="mx-auto max-w-6xl p-6">
-      <header className="mb-6">
-        <h1 className="text-2xl font-semibold tracking-tight">Incidents</h1>
-        <p className="mt-1 text-sm text-slate-500">
-          Review, analyze, and remediate cloud operations incidents.
-        </p>
+      <header className="mb-6 flex items-start justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-semibold tracking-tight">Incidents</h1>
+          <p className="mt-1 text-sm text-slate-500">
+            Review, analyze, and remediate cloud operations incidents.
+          </p>
+        </div>
+        <NewIncidentDialog onCreated={() => load()} />
       </header>
 
       {state === "ready" && (

@@ -156,6 +156,38 @@ export function getReport(id: string, signal?: AbortSignal): Promise<Report> {
   );
 }
 
+export interface NewIncident {
+  title: string;
+  severity: Severity;
+  affected_service: string;
+  assigned_operator?: string | null;
+}
+
+/** POST /api/v1/incidents — create a new incident. */
+export function createIncident(body: NewIncident): Promise<IncidentSummary> {
+  return apiFetch<IncidentSummary>("/api/v1/incidents", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  });
+}
+
+export interface NewEvidence {
+  evidence_type: string;
+  summary: string;
+  source?: string | null;
+  payload?: Record<string, unknown>;
+}
+
+/** POST /api/v1/incidents/{id}/evidence — attach evidence to an incident. */
+export function addEvidence(id: string, body: NewEvidence): Promise<unknown> {
+  return apiFetch(`/api/v1/incidents/${encodeURIComponent(id)}/evidence`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  });
+}
+
 /** POST /api/v1/incidents/{id}/salesforce-sync — manual fake Salesforce sync. */
 export function syncSalesforce(id: string): Promise<IntegrationSync> {
   return apiFetch<IntegrationSync>(
