@@ -44,11 +44,18 @@ class Settings(BaseSettings):
     # Prefix under which versioned API routes are mounted.
     api_v1_prefix: str = Field(default="/api/v1", alias="API_V1_PREFIX")
 
-    # Allowed CORS origins. Defaults to the local frontend origin only.
-    cors_origins: list[str] = Field(
-        default=["http://localhost:3000"],
+    # Allowed CORS origins as a comma-separated string (local frontend only by
+    # default). Stored as a plain string so dotenv values are not JSON-decoded;
+    # use the `cors_origins` property for the parsed list.
+    cors_origins_raw: str = Field(
+        default="http://localhost:3000",
         alias="CORS_ORIGINS",
     )
+
+    @property
+    def cors_origins(self) -> list[str]:
+        """Parsed list of allowed CORS origins."""
+        return [o.strip() for o in self.cors_origins_raw.split(",") if o.strip()]
 
     # --- Database connection parts (assembled into a URL in shared.db) ---
     # Safe local defaults. Credentials are never hard-coded; production values
@@ -81,19 +88,6 @@ class Settings(BaseSettings):
     salesforce_client_secret: str = Field(
         default="", alias="SALESFORCE_CLIENT_SECRET"
     )
-
-    @field_validator("cors_origins", mode="before")
-    @classmethod
-    def _split_cors_origins(cls, value: object) -> object:
-        """Allow CORS_ORIGINS to be a comma-separated string in the env.
-
-        Accepts either a real list (from code/tests) or a comma-separated
-        string (from an environment variable), e.g.
-        "http://localhost:3000,http://localhost:3001".
-        """
-        if isinstance(value, str):
-            return [origin.strip() for origin in value.split(",") if origin.strip()]
-        return value
 
     @field_validator("log_level")
     @classmethod
