@@ -9,6 +9,7 @@
 import { apiFetch } from "./client";
 import type {
   HealthResponse,
+  IncidentDetail,
   IncidentStatus,
   IncidentSummary,
   Severity,
@@ -37,4 +38,15 @@ export function getIncidents(
   const query = params.toString();
   const path = query ? `/api/v1/incidents?${query}` : "/api/v1/incidents";
   return apiFetch<IncidentSummary[]>(path, { signal });
+}
+
+/** GET /api/v1/incidents/{id} — full incident detail with nested relations. */
+export function getIncident(
+  id: string,
+  signal?: AbortSignal,
+): Promise<IncidentDetail> {
+  return apiFetch<IncidentDetail>(
+    `/api/v1/incidents/${encodeURIComponent(id)}`,
+    { signal },
+  );
 }

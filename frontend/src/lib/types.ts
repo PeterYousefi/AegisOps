@@ -48,3 +48,53 @@ export const INCIDENT_STATUSES: IncidentStatus[] = [
   "mitigated",
   "resolved",
 ];
+
+/** Evidence types (mirrors backend EvidenceType enum values). */
+export type EvidenceType =
+  | "alert"
+  | "metric"
+  | "log"
+  | "deployment"
+  | "runbook"
+  | "operator_note";
+
+export const EVIDENCE_TYPES: EvidenceType[] = [
+  "alert",
+  "metric",
+  "log",
+  "deployment",
+  "runbook",
+  "operator_note",
+];
+
+/** A single evidence record (mirrors backend EvidenceOut). */
+export interface EvidenceRecord {
+  id: string;
+  incident_id: string;
+  evidence_type: EvidenceType;
+  source: string | null;
+  summary: string;
+  payload: Record<string, unknown>;
+  observed_at: string | null;
+  created_at: string;
+}
+
+/** An audit event (mirrors backend AuditEventOut). */
+export interface AuditEvent {
+  id: string;
+  incident_id: string | null;
+  event_type: string;
+  actor_type: string;
+  actor_id: string;
+  previous_state: string | null;
+  new_state: string | null;
+  metadata: Record<string, unknown>;
+  correlation_id: string | null;
+  created_at: string;
+}
+
+/** Full incident detail (mirrors backend IncidentDetail). */
+export interface IncidentDetail extends IncidentSummary {
+  evidence: EvidenceRecord[];
+  audit_events: AuditEvent[];
+}
