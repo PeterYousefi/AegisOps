@@ -14,6 +14,7 @@ import { EvidenceTimeline } from "@/components/evidence/evidence-timeline";
 import { AuditTimeline } from "@/components/audit/audit-timeline";
 import { AssessmentSection } from "@/components/ai/assessment-section";
 import { RemediationSection } from "@/components/remediation/remediation-section";
+import { ReportSection } from "@/components/report/report-section";
 
 type LoadState = "loading" | "error" | "not_found" | "ready";
 
@@ -120,7 +121,12 @@ export default function IncidentDetailPage({
           <AssessmentSection incidentId={incident.id} onAssessed={() => load()} />
 
           <RemediationSection incidentId={incident.id} onChanged={() => load()} />
-          <ComingSoon title="Post-incident report" />
+          <ReportSection
+            incidentId={incident.id}
+            canGenerate={
+              incident.status === "mitigated" || incident.status === "resolved"
+            }
+          />
           <ComingSoon title="Salesforce sync" />
 
           <AuditTimeline events={incident.audit_events} />

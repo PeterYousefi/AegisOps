@@ -27,3 +27,20 @@ class AssessmentOut(BaseModel):
     safety_notes: list[str]
     validation_status: str
     created_at: _dt.datetime
+
+
+class ReportOut(BaseModel):
+    """API representation of a stored post-incident report."""
+
+    model_config = ConfigDict(from_attributes=True)
+
+    id: str
+    incident_id: str
+    provider: str
+    timeline_summary: str
+    customer_impact_summary: str
+    root_cause_summary: str
+    remediation_summary: str
+    follow_up_actions: list[str]
+    lessons_learned: list[str]
+    created_at: _dt.datetime
