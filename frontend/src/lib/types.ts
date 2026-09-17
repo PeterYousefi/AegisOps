@@ -131,6 +131,20 @@ export interface Execution {
   completed_at: string | null;
 }
 
+/** Post-incident report (mirrors backend ReportOut). */
+export interface Report {
+  id: string;
+  incident_id: string;
+  provider: string;
+  timeline_summary: string;
+  customer_impact_summary: string;
+  root_cause_summary: string;
+  remediation_summary: string;
+  follow_up_actions: string[];
+  lessons_learned: string[];
+  created_at: string;
+}
+
 /** AI incident assessment (mirrors backend AssessmentOut). */
 export interface Assessment {
   id: string;

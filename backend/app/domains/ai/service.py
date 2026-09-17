@@ -101,6 +101,74 @@ def generate_incident_assessment(
     return assessment
 
 
+def generate_post_incident_report(session: Session, incident_id: str):
+    """Generate and persist a post-incident report (only after mitigation)."""
+    from app.domains.ai.models import PostIncidentReport
+    from app.domains.ai.schemas import PostIncidentReportModel
+    from app.shared.enums import IncidentStatus
+    from app.shared.errors import ValidationError as DomainValidationError
+
+    incident = incident_service.get_incident_or_404(session, incident_id)
+    if incident.status not in (IncidentStatus.MITIGATED, IncidentStatus.RESOLVED):
+        raise DomainValidationError(
+            "A post-incident report can only be generated after the incident is "
+            f"mitigated (current status={incident.status.value})."
+        )
+
+    context = build_context(session, incident)
+    provider = get_ai_provider()
+    raw = provider.generate_report(context)
+
+    # Validate strictly; on failure, refuse rather than store unvalidated output.
+    from pydantic import ValidationError as PydanticValidationError
+
+    try:
+        model = PostIncidentReportModel.model_validate(raw)
+    except PydanticValidationError:
+        audit_service.record_event(
+            session,
+            incident_id,
+            AuditEventType.ASSESSMENT_VALIDATION_FAILED,
+            metadata={"stage": "report"},
+        )
+        session.commit()
+        raise DomainValidationError("The generated report failed validation.")
+
+    report = PostIncidentReport(
+        incident_id=incident_id,
+        provider=getattr(provider, "name", "unknown"),
+        timeline_summary=model.timeline_summary,
+        customer_impact_summary=model.customer_impact_summary,
+        root_cause_summary=model.root_cause_summary,
+        remediation_summary=model.remediation_summary,
+        follow_up_actions=list(model.follow_up_actions),
+        lessons_learned=list(model.lessons_learned),
+    )
+    session.add(report)
+    session.flush()
+
+    audit_service.record_event(
+        session,
+        incident_id,
+        AuditEventType.POST_INCIDENT_REPORT_GENERATED,
+        metadata={"report_id": report.id},
+    )
+    session.commit()
+    return report
+
+
+def get_latest_report(session: Session, incident_id: str):
+    from app.domains.ai.models import PostIncidentReport
+
+    stmt = (
+        select(PostIncidentReport)
+        .where(PostIncidentReport.incident_id == incident_id)
+        .order_by(desc(PostIncidentReport.created_at))
+        .limit(1)
+    )
+    return session.scalar(stmt)
+
+
 def get_latest_assessment(
     session: Session, incident_id: str
 ) -> IncidentAssessment | None:

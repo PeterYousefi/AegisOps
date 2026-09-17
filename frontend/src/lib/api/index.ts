@@ -15,6 +15,7 @@ import type {
   IncidentStatus,
   IncidentSummary,
   Proposal,
+  Report,
   Severity,
 } from "@/lib/types";
 
@@ -134,6 +135,22 @@ export function getExecution(
 ): Promise<Execution> {
   return apiFetch<Execution>(
     `/api/v1/proposals/${encodeURIComponent(proposalId)}/execution`,
+    { signal },
+  );
+}
+
+/** POST /api/v1/incidents/{id}/report — generate the post-incident report. */
+export function generateReport(id: string): Promise<Report> {
+  return apiFetch<Report>(
+    `/api/v1/incidents/${encodeURIComponent(id)}/report`,
+    { method: "POST" },
+  );
+}
+
+/** GET /api/v1/incidents/{id}/report — latest report (404 if none). */
+export function getReport(id: string, signal?: AbortSignal): Promise<Report> {
+  return apiFetch<Report>(
+    `/api/v1/incidents/${encodeURIComponent(id)}/report`,
     { signal },
   );
 }
