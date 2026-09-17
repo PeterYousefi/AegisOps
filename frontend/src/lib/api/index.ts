@@ -8,6 +8,7 @@
 
 import { apiFetch } from "./client";
 import type {
+  Assessment,
   HealthResponse,
   IncidentDetail,
   IncidentStatus,
@@ -47,6 +48,28 @@ export function getIncident(
 ): Promise<IncidentDetail> {
   return apiFetch<IncidentDetail>(
     `/api/v1/incidents/${encodeURIComponent(id)}`,
+    { signal },
+  );
+}
+
+/** POST /api/v1/incidents/{id}/assess — run AI assessment. */
+export function assessIncident(
+  id: string,
+  signal?: AbortSignal,
+): Promise<Assessment> {
+  return apiFetch<Assessment>(
+    `/api/v1/incidents/${encodeURIComponent(id)}/assess`,
+    { method: "POST", signal },
+  );
+}
+
+/** GET /api/v1/incidents/{id}/assessment — latest assessment (404 if none). */
+export function getAssessment(
+  id: string,
+  signal?: AbortSignal,
+): Promise<Assessment> {
+  return apiFetch<Assessment>(
+    `/api/v1/incidents/${encodeURIComponent(id)}/assessment`,
     { signal },
   );
 }
