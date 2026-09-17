@@ -2,6 +2,7 @@
 
 import { use, useCallback, useEffect, useState } from "react";
 import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 import { ApiError, getIncident } from "@/lib/api";
 import type { IncidentDetail } from "@/lib/types";
 import { formatDateTime } from "@/lib/format";
@@ -10,6 +11,7 @@ import { ErrorState } from "@/components/ui/error-state";
 import { EmptyState } from "@/components/ui/empty-state";
 import { SeverityBadge } from "@/components/incidents/severity-badge";
 import { StatusBadge } from "@/components/incidents/status-badge";
+import { WorkflowStepper } from "@/components/incidents/workflow-stepper";
 import { EvidenceTimeline } from "@/components/evidence/evidence-timeline";
 import { AuditTimeline } from "@/components/audit/audit-timeline";
 import { AssessmentSection } from "@/components/ai/assessment-section";
@@ -56,9 +58,13 @@ export default function IncidentDetailPage({
   }, [load]);
 
   return (
-    <main className="mx-auto max-w-4xl p-6">
-      <Link href="/incidents" className="text-sm text-blue-700 hover:underline">
-        ← Back to incidents
+    <div className="mx-auto max-w-4xl p-6">
+      <Link
+        href="/incidents"
+        className="inline-flex items-center gap-1 text-sm text-slate-500 hover:text-accent"
+      >
+        <ArrowLeft className="h-4 w-4" aria-hidden />
+        Back to incidents
       </Link>
 
       {state === "loading" && (
@@ -83,43 +89,58 @@ export default function IncidentDetailPage({
       )}
 
       {state === "ready" && incident && (
-        <div className="mt-4 space-y-8">
-          <header>
+        <div className="mt-4 space-y-6">
+          <header className="card p-5">
             <div className="flex flex-wrap items-center gap-2">
-              <h1 className="text-2xl font-semibold">{incident.title}</h1>
+              <h1 className="text-2xl font-semibold tracking-tight">
+                {incident.title}
+              </h1>
               <SeverityBadge severity={incident.severity} />
               <StatusBadge status={incident.status} />
             </div>
-            <p className="mt-1 text-sm text-gray-600">
+            <p className="mt-1 text-sm text-slate-500">
               Service: {incident.affected_service} · Owner:{" "}
               {incident.assigned_operator ?? "Unassigned"} · Updated:{" "}
               {formatDateTime(incident.updated_at)}
             </p>
+            <div className="mt-4 border-t border-slate-100 pt-4">
+              <WorkflowStepper status={incident.status} />
+            </div>
+            {incident.ai_summary ? (
+              <p className="mt-4 text-sm text-slate-700">{incident.ai_summary}</p>
+            ) : null}
           </header>
 
-          <section>
-            <h2 className="mb-2 text-lg font-semibold">Summary</h2>
-            <p className="text-sm text-gray-700">
-              {incident.ai_summary ?? "No summary available yet."}
-            </p>
-          </section>
+          <div className="card p-5">
+            <EvidenceTimeline evidence={incident.evidence} />
+          </div>
 
-          <EvidenceTimeline evidence={incident.evidence} />
+          <div className="card p-5">
+            <AssessmentSection incidentId={incident.id} onAssessed={() => load()} />
+          </div>
 
-          <AssessmentSection incidentId={incident.id} onAssessed={() => load()} />
+          <div className="card p-5">
+            <RemediationSection incidentId={incident.id} onChanged={() => load()} />
+          </div>
 
-          <RemediationSection incidentId={incident.id} onChanged={() => load()} />
-          <ReportSection
-            incidentId={incident.id}
-            canGenerate={
-              incident.status === "mitigated" || incident.status === "resolved"
-            }
-          />
-          <SalesforceSection incidentId={incident.id} />
+          <div className="card p-5">
+            <ReportSection
+              incidentId={incident.id}
+              canGenerate={
+                incident.status === "mitigated" || incident.status === "resolved"
+              }
+            />
+          </div>
 
-          <AuditTimeline events={incident.audit_events} />
+          <div className="card p-5">
+            <SalesforceSection incidentId={incident.id} />
+          </div>
+
+          <div className="card p-5">
+            <AuditTimeline events={incident.audit_events} />
+          </div>
         </div>
       )}
-    </main>
+    </div>
   );
 }
