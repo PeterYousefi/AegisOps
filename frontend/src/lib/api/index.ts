@@ -188,6 +188,14 @@ export function addEvidence(id: string, body: NewEvidence): Promise<unknown> {
   });
 }
 
+/** POST /api/v1/incidents/{id}/resolve — mark a mitigated incident resolved. */
+export function resolveIncident(id: string): Promise<IncidentSummary> {
+  return apiFetch<IncidentSummary>(
+    `/api/v1/incidents/${encodeURIComponent(id)}/resolve`,
+    { method: "POST" },
+  );
+}
+
 /** POST /api/v1/incidents/{id}/salesforce-sync — manual fake Salesforce sync. */
 export function syncSalesforce(id: string): Promise<IntegrationSync> {
   return apiFetch<IntegrationSync>(

@@ -2,8 +2,8 @@
 
 import { use, useCallback, useEffect, useState } from "react";
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
-import { ApiError, getIncident } from "@/lib/api";
+import { ArrowLeft, CheckCircle2 } from "lucide-react";
+import { ApiError, getIncident, resolveIncident } from "@/lib/api";
 import type { IncidentDetail } from "@/lib/types";
 import { formatDateTime } from "@/lib/format";
 import { Spinner } from "@/components/ui/spinner";
@@ -101,6 +101,23 @@ export default function IncidentDetailPage({
               </h1>
               <SeverityBadge severity={incident.severity} />
               <StatusBadge status={incident.status} />
+              {incident.status === "mitigated" && (
+                <button
+                  type="button"
+                  onClick={async () => {
+                    try {
+                      await resolveIncident(incident.id);
+                      load();
+                    } catch {
+                      /* stays mitigated; surfaced elsewhere */
+                    }
+                  }}
+                  className="ml-auto inline-flex items-center gap-1.5 rounded-lg border border-green-300 px-3 py-1.5 text-sm font-medium text-green-700 hover:bg-green-50"
+                >
+                  <CheckCircle2 className="h-4 w-4" aria-hidden />
+                  Resolve incident
+                </button>
+              )}
             </div>
             <p className="mt-1 text-sm text-slate-500">
               Service: {incident.affected_service} · Owner:{" "}

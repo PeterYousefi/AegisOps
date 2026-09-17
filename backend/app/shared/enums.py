@@ -102,6 +102,7 @@ class AuditEventType(str, Enum):
     """Types of append-only audit events."""
 
     INCIDENT_CREATED = "incident_created"
+    INCIDENT_RESOLVED = "incident_resolved"
     EVIDENCE_ADDED = "evidence_added"
     ASSESSMENT_REQUESTED = "assessment_requested"
     ASSESSMENT_GENERATED = "assessment_generated"

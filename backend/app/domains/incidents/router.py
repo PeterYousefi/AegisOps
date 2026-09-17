@@ -59,6 +59,12 @@ def add_evidence(
     return EvidenceOut.model_validate(evidence)
 
 
+@router.post("/{incident_id}/resolve", response_model=IncidentSummary)
+def resolve_incident(incident_id: str, db: Session = Depends(get_db)) -> IncidentSummary:
+    incident = service.resolve_incident(db, incident_id)
+    return IncidentSummary.model_validate(incident)
+
+
 @router.get("/{incident_id}", response_model=IncidentDetail)
 def get_incident(incident_id: str, db: Session = Depends(get_db)) -> IncidentDetail:
     detail = service.get_incident_detail(db, incident_id)
