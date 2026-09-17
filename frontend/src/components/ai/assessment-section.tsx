@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { ApiError, assessIncident, getAssessment } from "@/lib/api";
-import type { Assessment } from "@/lib/types";
+import type { Assessment, EvidenceRecord } from "@/lib/types";
+import { humanize } from "@/lib/format";
 import { Spinner } from "@/components/ui/spinner";
 import { ErrorState } from "@/components/ui/error-state";
 import { AssessmentPanel } from "./assessment-panel";
@@ -16,13 +17,22 @@ type State = "loading" | "none" | "ready" | "running" | "error";
  */
 export function AssessmentSection({
   incidentId,
+  evidence = [],
   onAssessed,
 }: {
   incidentId: string;
+  evidence?: EvidenceRecord[];
   onAssessed?: () => void;
 }) {
   const [assessment, setAssessment] = useState<Assessment | null>(null);
   const [state, setState] = useState<State>("loading");
+
+  // Map evidence id -> readable label ("Alert: 5xx ratio…") for citations.
+  const evidenceLabels: Record<string, string> = {};
+  for (const e of evidence) {
+    const summary = e.summary.length > 40 ? `${e.summary.slice(0, 40)}…` : e.summary;
+    evidenceLabels[e.id] = `${humanize(e.evidence_type)}: ${summary}`;
+  }
 
   useEffect(() => {
     const controller = new AbortController();
@@ -86,7 +96,7 @@ export function AssessmentSection({
         </p>
       )}
       {state === "ready" && assessment && (
-        <AssessmentPanel assessment={assessment} />
+        <AssessmentPanel assessment={assessment} evidenceLabels={evidenceLabels} />
       )}
     </section>
   );

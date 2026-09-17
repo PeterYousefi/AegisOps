@@ -124,6 +124,7 @@ def seed_incidents(session: Session) -> None:
         session,
         Incident(
             id=PRIMARY_INCIDENT_ID,
+            reference="INC-1001",
             title="Checkout API elevated 5xx errors after deploy",
             severity=Severity.SEV1,
             status=IncidentStatus.INVESTIGATING,
@@ -205,11 +206,12 @@ def seed_incidents(session: Session) -> None:
         ),
     )
 
-    # --- Filler incidents (list realism only) ---
+    # --- Additional incidents for a realistic, populated dashboard ---
     _upsert_incident(
         session,
         Incident(
             id=FILLER_INCIDENT_1_ID,
+            reference="INC-1002",
             title="Search service elevated latency",
             severity=Severity.SEV3,
             status=IncidentStatus.MITIGATED,
@@ -222,12 +224,52 @@ def seed_incidents(session: Session) -> None:
         session,
         Incident(
             id=FILLER_INCIDENT_2_ID,
+            reference="INC-1003",
             title="Image CDN cache miss rate elevated",
             severity=Severity.SEV4,
             status=IncidentStatus.DETECTED,
             affected_service="cdn",
             assigned_operator=None,
             ai_summary=None,
+        ),
+    )
+    _upsert_incident(
+        session,
+        Incident(
+            id="33333333-0000-0000-0000-000000000003",
+            reference="INC-1004",
+            title="Auth service token validation failures",
+            severity=Severity.SEV2,
+            status=IncidentStatus.AWAITING_APPROVAL,
+            affected_service="auth-api",
+            assigned_operator="on-call-operator",
+            ai_summary="Elevated 401s traced to a clock-skew issue on a new node.",
+        ),
+    )
+    _upsert_incident(
+        session,
+        Incident(
+            id="33333333-0000-0000-0000-000000000004",
+            reference="INC-1005",
+            title="Orders database connection pool exhaustion",
+            severity=Severity.SEV2,
+            status=IncidentStatus.INVESTIGATING,
+            affected_service="orders-api",
+            assigned_operator="on-call-operator",
+            ai_summary=None,
+        ),
+    )
+    _upsert_incident(
+        session,
+        Incident(
+            id="33333333-0000-0000-0000-000000000005",
+            reference="INC-1006",
+            title="Notification worker queue backlog",
+            severity=Severity.SEV3,
+            status=IncidentStatus.RESOLVED,
+            affected_service="notifications",
+            assigned_operator="on-call-operator",
+            ai_summary="Backlog cleared after scaling workers; no customer impact.",
         ),
     )
 

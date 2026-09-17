@@ -20,7 +20,12 @@ export function IncidentCard({ incident }: { incident: IncidentSummary }) {
       className={`card block border-l-4 p-4 hover:shadow-md ${ACCENT[incident.severity]}`}
     >
       <div className="flex items-start justify-between gap-3">
-        <h3 className="font-semibold text-slate-900">{incident.title}</h3>
+        <div>
+          <span className="font-mono text-xs text-slate-400">
+            {incident.reference}
+          </span>
+          <h3 className="font-semibold text-slate-900">{incident.title}</h3>
+        </div>
         <SeverityBadge severity={incident.severity} />
       </div>
       <div className="mt-2 flex flex-wrap items-center gap-2 text-sm text-slate-600">

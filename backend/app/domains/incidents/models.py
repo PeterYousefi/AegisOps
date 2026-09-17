@@ -16,6 +16,11 @@ class Incident(UUIDPrimaryKeyMixin, TimestampMixin, Base):
 
     __tablename__ = "incidents"
 
+    # Human-readable reference code (e.g. "INC-1042") shown in the UI instead
+    # of the raw UUID primary key.
+    reference: Mapped[str] = mapped_column(
+        String(16), nullable=False, unique=True, name="reference"
+    )
     title: Mapped[str] = mapped_column(String(255), nullable=False)
     severity: Mapped[Severity] = mapped_column(
         str_enum(Severity, length=16), nullable=False

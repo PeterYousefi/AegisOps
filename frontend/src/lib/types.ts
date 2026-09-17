@@ -28,6 +28,7 @@ export type IncidentStatus =
 /** List-view incident (mirrors backend IncidentSummary). */
 export interface IncidentSummary {
   id: string;
+  reference: string;
   title: string;
   severity: Severity;
   status: IncidentStatus;
