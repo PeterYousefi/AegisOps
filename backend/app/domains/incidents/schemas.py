@@ -59,3 +59,21 @@ class IncidentDetail(IncidentSummary):
 
     evidence: list[EvidenceOut] = []
     audit_events: list[AuditEventOut] = []
+
+
+class IncidentCreate(BaseModel):
+    """Request body for creating a new incident."""
+
+    title: str = Field(min_length=1, max_length=255)
+    severity: Severity
+    affected_service: str = Field(min_length=1, max_length=255)
+    assigned_operator: str | None = Field(default=None, max_length=255)
+
+
+class EvidenceCreate(BaseModel):
+    """Request body for attaching evidence to an incident."""
+
+    evidence_type: EvidenceType
+    summary: str = Field(min_length=1)
+    source: str | None = Field(default=None, max_length=255)
+    payload: dict = Field(default_factory=dict)

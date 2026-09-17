@@ -5,10 +5,17 @@ from __future__ import annotations
 from sqlalchemy.orm import Session
 
 from app.domains.audit import repository as audit_repo
+from app.domains.audit import service as audit_service
 from app.domains.evidence import repository as evidence_repo
+from app.domains.evidence.models import EvidenceRecord
 from app.domains.incidents import repository as incident_repo
 from app.domains.incidents.models import Incident
-from app.shared.enums import IncidentStatus, Severity
+from app.shared.enums import (
+    AuditEventType,
+    EvidenceType,
+    IncidentStatus,
+    Severity,
+)
 from app.shared.errors import NotFoundError
 from app.shared.state_machine import assert_transition
 
@@ -38,6 +45,69 @@ def get_incident_detail(session: Session, incident_id: str) -> dict:
         "evidence": evidence,
         "audit_events": audit_events,
     }
+
+
+def create_incident(
+    session: Session,
+    *,
+    title: str,
+    severity: Severity,
+    affected_service: str,
+    assigned_operator: str | None = None,
+) -> Incident:
+    """Create a new incident in the `detected` state and record an audit event."""
+    incident = Incident(
+        title=title,
+        severity=severity,
+        status=IncidentStatus.DETECTED,
+        affected_service=affected_service,
+        assigned_operator=assigned_operator,
+    )
+    session.add(incident)
+    session.flush()
+
+    audit_service.record_event(
+        session,
+        incident.id,
+        AuditEventType.INCIDENT_CREATED,
+        new_state=incident.status.value,
+        metadata={"title": title, "severity": severity.value},
+    )
+    session.commit()
+    return incident
+
+
+def add_evidence(
+    session: Session,
+    incident_id: str,
+    *,
+    evidence_type: EvidenceType,
+    summary: str,
+    source: str | None = None,
+    payload: dict | None = None,
+) -> EvidenceRecord:
+    """Attach an evidence record to an incident and record an audit event."""
+    # 404 if the incident does not exist.
+    get_incident_or_404(session, incident_id)
+
+    evidence = EvidenceRecord(
+        incident_id=incident_id,
+        evidence_type=evidence_type,
+        source=source,
+        summary=summary,
+        payload=payload or {},
+    )
+    session.add(evidence)
+    session.flush()
+
+    audit_service.record_event(
+        session,
+        incident_id,
+        AuditEventType.EVIDENCE_ADDED,
+        metadata={"evidence_id": evidence.id, "evidence_type": evidence_type.value},
+    )
+    session.commit()
+    return evidence
 
 
 def change_status(

@@ -13,6 +13,7 @@ import { SeverityBadge } from "@/components/incidents/severity-badge";
 import { StatusBadge } from "@/components/incidents/status-badge";
 import { WorkflowStepper } from "@/components/incidents/workflow-stepper";
 import { EvidenceTimeline } from "@/components/evidence/evidence-timeline";
+import { AddEvidenceForm } from "@/components/evidence/add-evidence-form";
 import { AuditTimeline } from "@/components/audit/audit-timeline";
 import { AssessmentSection } from "@/components/ai/assessment-section";
 import { RemediationSection } from "@/components/remediation/remediation-section";
@@ -113,6 +114,9 @@ export default function IncidentDetailPage({
 
           <div className="card p-5">
             <EvidenceTimeline evidence={incident.evidence} />
+            <div className="mt-3 border-t border-slate-100 pt-3">
+              <AddEvidenceForm incidentId={incident.id} onAdded={() => load()} />
+            </div>
           </div>
 
           <div className="card p-5">
