@@ -99,6 +99,38 @@ export interface IncidentDetail extends IncidentSummary {
   audit_events: AuditEvent[];
 }
 
+/** Remediation proposal (mirrors backend ProposalOut). */
+export interface Proposal {
+  id: string;
+  incident_id: string;
+  assessment_id: string | null;
+  action_type: string;
+  action_description: string;
+  justification: string;
+  risk_level: string;
+  blast_radius: string;
+  prerequisites: string[];
+  rollback_plan: string;
+  expected_outcome: string;
+  required_approval: boolean;
+  evidence_references: string[];
+  runbook_references: string[];
+  status: string;
+  created_at: string;
+}
+
+/** Simulated remediation execution (mirrors backend ExecutionOut). */
+export interface Execution {
+  id: string;
+  proposal_id: string;
+  action_type: string;
+  status: "started" | "succeeded" | "failed";
+  result: Record<string, unknown> | null;
+  failure_reason: string | null;
+  started_at: string;
+  completed_at: string | null;
+}
+
 /** AI incident assessment (mirrors backend AssessmentOut). */
 export interface Assessment {
   id: string;

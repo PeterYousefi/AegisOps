@@ -9,10 +9,12 @@
 import { apiFetch } from "./client";
 import type {
   Assessment,
+  Execution,
   HealthResponse,
   IncidentDetail,
   IncidentStatus,
   IncidentSummary,
+  Proposal,
   Severity,
 } from "@/lib/types";
 
@@ -70,6 +72,68 @@ export function getAssessment(
 ): Promise<Assessment> {
   return apiFetch<Assessment>(
     `/api/v1/incidents/${encodeURIComponent(id)}/assessment`,
+    { signal },
+  );
+}
+
+/** GET /api/v1/incidents/{id}/proposals — list proposals (newest first). */
+export function getProposals(
+  id: string,
+  signal?: AbortSignal,
+): Promise<Proposal[]> {
+  return apiFetch<Proposal[]>(
+    `/api/v1/incidents/${encodeURIComponent(id)}/proposals`,
+    { signal },
+  );
+}
+
+/** POST /api/v1/incidents/{id}/proposals — generate a remediation proposal. */
+export function createProposal(id: string): Promise<Proposal> {
+  return apiFetch<Proposal>(
+    `/api/v1/incidents/${encodeURIComponent(id)}/proposals`,
+    { method: "POST" },
+  );
+}
+
+/** POST /api/v1/proposals/{id}/approve */
+export function approveProposal(
+  proposalId: string,
+  comment?: string,
+): Promise<unknown> {
+  return apiFetch(`/api/v1/proposals/${encodeURIComponent(proposalId)}/approve`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ comment: comment ?? null }),
+  });
+}
+
+/** POST /api/v1/proposals/{id}/reject */
+export function rejectProposal(
+  proposalId: string,
+  comment?: string,
+): Promise<unknown> {
+  return apiFetch(`/api/v1/proposals/${encodeURIComponent(proposalId)}/reject`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ comment: comment ?? null }),
+  });
+}
+
+/** POST /api/v1/proposals/{id}/execute — run the simulated remediation. */
+export function executeProposal(proposalId: string): Promise<Execution> {
+  return apiFetch<Execution>(
+    `/api/v1/proposals/${encodeURIComponent(proposalId)}/execute`,
+    { method: "POST" },
+  );
+}
+
+/** GET /api/v1/proposals/{id}/execution — latest execution (404 if none). */
+export function getExecution(
+  proposalId: string,
+  signal?: AbortSignal,
+): Promise<Execution> {
+  return apiFetch<Execution>(
+    `/api/v1/proposals/${encodeURIComponent(proposalId)}/execution`,
     { signal },
   );
 }

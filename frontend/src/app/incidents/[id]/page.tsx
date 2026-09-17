@@ -13,6 +13,7 @@ import { StatusBadge } from "@/components/incidents/status-badge";
 import { EvidenceTimeline } from "@/components/evidence/evidence-timeline";
 import { AuditTimeline } from "@/components/audit/audit-timeline";
 import { AssessmentSection } from "@/components/ai/assessment-section";
+import { RemediationSection } from "@/components/remediation/remediation-section";
 
 type LoadState = "loading" | "error" | "not_found" | "ready";
 
@@ -118,7 +119,7 @@ export default function IncidentDetailPage({
 
           <AssessmentSection incidentId={incident.id} onAssessed={() => load()} />
 
-          <ComingSoon title="Remediation proposal" />
+          <RemediationSection incidentId={incident.id} onChanged={() => load()} />
           <ComingSoon title="Post-incident report" />
           <ComingSoon title="Salesforce sync" />
 
