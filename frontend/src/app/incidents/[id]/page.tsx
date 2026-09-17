@@ -1,6 +1,6 @@
 "use client";
 
-import { use, useEffect, useState } from "react";
+import { use, useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { ApiError, getIncident } from "@/lib/api";
 import type { IncidentDetail } from "@/lib/types";
@@ -12,6 +12,7 @@ import { SeverityBadge } from "@/components/incidents/severity-badge";
 import { StatusBadge } from "@/components/incidents/status-badge";
 import { EvidenceTimeline } from "@/components/evidence/evidence-timeline";
 import { AuditTimeline } from "@/components/audit/audit-timeline";
+import { AssessmentSection } from "@/components/ai/assessment-section";
 
 type LoadState = "loading" | "error" | "not_found" | "ready";
 
@@ -37,25 +38,32 @@ export default function IncidentDetailPage({
   const [incident, setIncident] = useState<IncidentDetail | null>(null);
   const [state, setState] = useState<LoadState>("loading");
 
+  const load = useCallback(
+    (signal?: AbortSignal) => {
+      getIncident(id, signal)
+        .then((data) => {
+          setIncident(data);
+          setState("ready");
+        })
+        .catch((err: unknown) => {
+          if (signal?.aborted) return;
+          if (err instanceof ApiError && err.status === 404) {
+            setState("not_found");
+          } else {
+            setState("error");
+            console.error("Failed to load incident", err);
+          }
+        });
+    },
+    [id],
+  );
+
   useEffect(() => {
     const controller = new AbortController();
     setState("loading");
-    getIncident(id, controller.signal)
-      .then((data) => {
-        setIncident(data);
-        setState("ready");
-      })
-      .catch((err: unknown) => {
-        if (controller.signal.aborted) return;
-        if (err instanceof ApiError && err.status === 404) {
-          setState("not_found");
-        } else {
-          setState("error");
-          console.error("Failed to load incident", err);
-        }
-      });
+    load(controller.signal);
     return () => controller.abort();
-  }, [id]);
+  }, [load]);
 
   return (
     <main className="mx-auto max-w-4xl p-6">
@@ -108,7 +116,8 @@ export default function IncidentDetailPage({
 
           <EvidenceTimeline evidence={incident.evidence} />
 
-          <ComingSoon title="AI assessment" />
+          <AssessmentSection incidentId={incident.id} onAssessed={() => load()} />
+
           <ComingSoon title="Remediation proposal" />
           <ComingSoon title="Post-incident report" />
           <ComingSoon title="Salesforce sync" />

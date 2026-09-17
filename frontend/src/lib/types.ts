@@ -98,3 +98,22 @@ export interface IncidentDetail extends IncidentSummary {
   evidence: EvidenceRecord[];
   audit_events: AuditEvent[];
 }
+
+/** AI incident assessment (mirrors backend AssessmentOut). */
+export interface Assessment {
+  id: string;
+  incident_id: string;
+  provider: string;
+  executive_summary: string;
+  severity: Severity;
+  affected_services: string[];
+  likely_root_cause: string;
+  confidence_score: number;
+  evidence_references: string[];
+  runbook_references: string[];
+  recommended_next_steps: string[];
+  uncertainties: string[];
+  safety_notes: string[];
+  validation_status: "valid" | "invalid_fallback";
+  created_at: string;
+}
