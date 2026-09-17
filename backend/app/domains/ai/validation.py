@@ -15,7 +15,10 @@ from dataclasses import dataclass
 from pydantic import ValidationError
 
 from app.domains.ai.provider import IncidentContext
-from app.domains.ai.schemas import IncidentAssessmentModel
+from app.domains.ai.schemas import (
+    IncidentAssessmentModel,
+    RemediationProposalModel,
+)
 
 
 @dataclass
@@ -91,3 +94,57 @@ def validate_assessment(
         )
 
     return AssessmentValidation(model=model, is_valid=True)
+
+
+@dataclass
+class ProposalValidation:
+    """Result of validating a raw remediation proposal payload."""
+
+    model: RemediationProposalModel | None
+    is_valid: bool
+    reason: str | None = None
+
+
+def validate_proposal(raw: dict, context: IncidentContext) -> ProposalValidation:
+    """Validate a raw remediation proposal against schema + reference existence.
+
+    Unlike assessments, an invalid proposal has no safe fallback action — we
+    refuse to fabricate a remediation. The caller records an audit event and
+    surfaces the failure instead of proposing anything.
+    """
+    valid_evidence_ids = {e.id for e in context.evidence}
+    valid_runbook_ids = {r.id for r in context.runbooks}
+
+    try:
+        model = RemediationProposalModel.model_validate(raw)
+    except ValidationError as exc:
+        return ProposalValidation(
+            model=None,
+            is_valid=False,
+            reason=f"schema_validation_failed: {exc.error_count()} error(s)",
+        )
+
+    if not model.required_approval:
+        return ProposalValidation(
+            model=None,
+            is_valid=False,
+            reason="required_approval must be true",
+        )
+
+    unknown_evidence = [
+        eid for eid in model.evidence_references if eid not in valid_evidence_ids
+    ]
+    unknown_runbooks = [
+        rid for rid in model.runbook_references if rid not in valid_runbook_ids
+    ]
+    if unknown_evidence or unknown_runbooks:
+        return ProposalValidation(
+            model=None,
+            is_valid=False,
+            reason=(
+                "unknown_reference: "
+                f"evidence={unknown_evidence} runbooks={unknown_runbooks}"
+            ),
+        )
+
+    return ProposalValidation(model=model, is_valid=True)
