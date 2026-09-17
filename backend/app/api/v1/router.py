@@ -14,6 +14,7 @@ from app.domains.audit.router import router as audit_router
 from app.domains.evidence.router import router as evidence_router
 from app.domains.incidents.router import router as incidents_router
 from app.domains.approvals.router import router as approvals_router
+from app.domains.integrations.salesforce.router import router as salesforce_router
 from app.domains.remediation.router import (
     incidents_router as remediation_incidents_router,
     proposals_router as remediation_proposals_router,
@@ -28,3 +29,4 @@ api_router.include_router(ai_router)
 api_router.include_router(remediation_incidents_router)
 api_router.include_router(remediation_proposals_router)
 api_router.include_router(approvals_router)
+api_router.include_router(salesforce_router)

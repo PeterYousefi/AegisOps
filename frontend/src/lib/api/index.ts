@@ -14,6 +14,7 @@ import type {
   IncidentDetail,
   IncidentStatus,
   IncidentSummary,
+  IntegrationSync,
   Proposal,
   Report,
   Severity,
@@ -151,6 +152,25 @@ export function generateReport(id: string): Promise<Report> {
 export function getReport(id: string, signal?: AbortSignal): Promise<Report> {
   return apiFetch<Report>(
     `/api/v1/incidents/${encodeURIComponent(id)}/report`,
+    { signal },
+  );
+}
+
+/** POST /api/v1/incidents/{id}/salesforce-sync — manual fake Salesforce sync. */
+export function syncSalesforce(id: string): Promise<IntegrationSync> {
+  return apiFetch<IntegrationSync>(
+    `/api/v1/incidents/${encodeURIComponent(id)}/salesforce-sync`,
+    { method: "POST" },
+  );
+}
+
+/** GET /api/v1/incidents/{id}/integration-syncs — sync history. */
+export function getIntegrationSyncs(
+  id: string,
+  signal?: AbortSignal,
+): Promise<IntegrationSync[]> {
+  return apiFetch<IntegrationSync[]>(
+    `/api/v1/incidents/${encodeURIComponent(id)}/integration-syncs`,
     { signal },
   );
 }

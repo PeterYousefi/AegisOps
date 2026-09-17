@@ -15,21 +15,9 @@ import { AuditTimeline } from "@/components/audit/audit-timeline";
 import { AssessmentSection } from "@/components/ai/assessment-section";
 import { RemediationSection } from "@/components/remediation/remediation-section";
 import { ReportSection } from "@/components/report/report-section";
+import { SalesforceSection } from "@/components/salesforce/salesforce-section";
 
 type LoadState = "loading" | "error" | "not_found" | "ready";
-
-/** Placeholder for sections implemented in later milestones. */
-function ComingSoon({ title }: { title: string }) {
-  return (
-    <section>
-      <h2 className="mb-3 text-lg font-semibold">{title}</h2>
-      <EmptyState
-        title="Not available yet"
-        description="This section is implemented in a later milestone."
-      />
-    </section>
-  );
-}
 
 export default function IncidentDetailPage({
   params,
@@ -127,7 +115,7 @@ export default function IncidentDetailPage({
               incident.status === "mitigated" || incident.status === "resolved"
             }
           />
-          <ComingSoon title="Salesforce sync" />
+          <SalesforceSection incidentId={incident.id} />
 
           <AuditTimeline events={incident.audit_events} />
         </div>

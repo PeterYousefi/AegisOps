@@ -28,3 +28,24 @@ def get_ai_provider() -> AIProvider:
     from app.domains.ai.mock_provider import MockAIProvider
 
     return MockAIProvider()
+
+
+def get_salesforce_integration():
+    """Return the configured Salesforce integration.
+
+    Defaults to the offline FakeSalesforceIntegration. The real REST
+    integration is used only when SALESFORCE_ENABLED=true and configured.
+    """
+    settings = get_settings()
+    if settings.salesforce_enabled:
+        from app.domains.integrations.salesforce.integration import (
+            SalesforceRestIntegration,
+        )
+
+        return SalesforceRestIntegration()
+
+    from app.domains.integrations.salesforce.integration import (
+        FakeSalesforceIntegration,
+    )
+
+    return FakeSalesforceIntegration()
