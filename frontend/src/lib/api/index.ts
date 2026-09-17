@@ -7,11 +7,34 @@
  */
 
 import { apiFetch } from "./client";
-import type { HealthResponse } from "@/lib/types";
+import type {
+  HealthResponse,
+  IncidentStatus,
+  IncidentSummary,
+  Severity,
+} from "@/lib/types";
 
 export { apiFetch, ApiError, API_BASE_URL } from "./client";
 
 /** GET /api/v1/health — backend liveness check. */
 export function getHealth(signal?: AbortSignal): Promise<HealthResponse> {
   return apiFetch<HealthResponse>("/api/v1/health", { signal });
+}
+
+export interface IncidentFilters {
+  status?: IncidentStatus;
+  severity?: Severity;
+}
+
+/** GET /api/v1/incidents — list incidents, optionally filtered. */
+export function getIncidents(
+  filters: IncidentFilters = {},
+  signal?: AbortSignal,
+): Promise<IncidentSummary[]> {
+  const params = new URLSearchParams();
+  if (filters.status) params.set("status", filters.status);
+  if (filters.severity) params.set("severity", filters.severity);
+  const query = params.toString();
+  const path = query ? `/api/v1/incidents?${query}` : "/api/v1/incidents";
+  return apiFetch<IncidentSummary[]>(path, { signal });
 }
