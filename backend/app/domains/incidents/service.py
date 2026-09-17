@@ -135,3 +135,21 @@ def change_status(
     incident.status = target
     session.flush()
     return incident
+
+
+def resolve_incident(session: Session, incident_id: str) -> Incident:
+    """Mark a mitigated incident as resolved (mitigated -> resolved), audited."""
+    incident = get_incident_or_404(session, incident_id)
+    previous = incident.status.value
+    assert_transition(incident.status, IncidentStatus.RESOLVED)
+    incident.status = IncidentStatus.RESOLVED
+    session.flush()
+    audit_service.record_event(
+        session,
+        incident_id,
+        AuditEventType.INCIDENT_RESOLVED,
+        previous_state=previous,
+        new_state=incident.status.value,
+    )
+    session.commit()
+    return incident

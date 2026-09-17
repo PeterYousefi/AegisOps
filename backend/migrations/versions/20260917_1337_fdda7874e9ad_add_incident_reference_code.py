@@ -18,9 +18,26 @@ depends_on: Union[str, Sequence[str], None] = None
 
 
 def upgrade() -> None:
+    # Add nullable first so existing rows are allowed, backfill a unique value
+    # per row, then enforce NOT NULL + uniqueness.
     op.add_column(
-        "incidents", sa.Column("reference", sa.String(length=16), nullable=False)
+        "incidents", sa.Column("reference", sa.String(length=16), nullable=True)
     )
+    # Backfill any existing rows with a unique placeholder reference derived
+    # from their row number.
+    op.execute(
+        """
+        WITH numbered AS (
+            SELECT id, ROW_NUMBER() OVER (ORDER BY created_at) AS rn
+            FROM incidents
+        )
+        UPDATE incidents
+        SET reference = 'INC-' || LPAD((1000 + numbered.rn)::text, 4, '0')
+        FROM numbered
+        WHERE incidents.id = numbered.id AND incidents.reference IS NULL
+        """
+    )
+    op.alter_column("incidents", "reference", nullable=False)
     op.create_unique_constraint("uq_incidents_reference", "incidents", ["reference"])
 
 

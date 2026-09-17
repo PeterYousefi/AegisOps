@@ -3,6 +3,7 @@
 import { useState } from "react";
 import type { EvidenceRecord } from "@/lib/types";
 import { formatDateTime, humanize } from "@/lib/format";
+import { MetricSparkline } from "./metric-sparkline";
 
 const TYPE_STYLES: Record<string, string> = {
   alert: "bg-red-50 text-red-700 border-red-200",
@@ -33,6 +34,9 @@ export function EvidenceItem({ evidence }: { evidence: EvidenceRecord }) {
             {evidence.source ? `${evidence.source} · ` : ""}
             {formatDateTime(evidence.observed_at ?? evidence.created_at)}
           </p>
+          {evidence.evidence_type === "metric" && (
+            <MetricSparkline payload={evidence.payload} />
+          )}
         </div>
         <button
           type="button"

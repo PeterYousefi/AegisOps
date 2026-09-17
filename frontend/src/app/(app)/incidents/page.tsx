@@ -18,6 +18,8 @@ import {
 
 type LoadState = "loading" | "error" | "ready";
 
+const SEV_ORDER: Record<string, number> = { sev1: 0, sev2: 1, sev3: 2, sev4: 3 };
+
 /**
  * Incident list page. Loads all incidents (for the summary strip) and applies
  * status/severity filtering client-side for the list. Explicit loading, error,
@@ -59,15 +61,27 @@ export default function IncidentsPage() {
     };
   }, [incidents]);
 
-  const filtered = useMemo(
-    () =>
-      incidents.filter(
-        (i) =>
-          (!filters.status || i.status === filters.status) &&
-          (!filters.severity || i.severity === filters.severity),
-      ),
-    [incidents, filters],
-  );
+  const [query, setQuery] = useState("");
+  const [sort, setSort] = useState<"updated" | "severity">("updated");
+
+  const filtered = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    const result = incidents.filter(
+      (i) =>
+        (!filters.status || i.status === filters.status) &&
+        (!filters.severity || i.severity === filters.severity) &&
+        (!q ||
+          i.title.toLowerCase().includes(q) ||
+          i.affected_service.toLowerCase().includes(q) ||
+          i.reference.toLowerCase().includes(q)),
+    );
+    result.sort((a, b) =>
+      sort === "severity"
+        ? SEV_ORDER[a.severity] - SEV_ORDER[b.severity]
+        : b.updated_at.localeCompare(a.updated_at),
+    );
+    return result;
+  }, [incidents, filters, query, sort]);
 
   return (
     <div className="mx-auto max-w-6xl p-6">
@@ -105,8 +119,32 @@ export default function IncidentsPage() {
         </div>
       )}
 
-      <div className="mb-4">
+      <div className="mb-4 flex flex-wrap items-end justify-between gap-4">
         <IncidentFilters value={filters} onChange={setFilters} />
+        <div className="flex flex-wrap items-end gap-3">
+          <label className="flex flex-col text-sm">
+            <span className="mb-1 font-medium text-slate-700">Search</span>
+            <input
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Title, service, or ref…"
+              aria-label="Search incidents"
+              className="w-56 rounded-md border border-slate-300 px-3 py-1.5 text-sm"
+            />
+          </label>
+          <label className="flex flex-col text-sm">
+            <span className="mb-1 font-medium text-slate-700">Sort by</span>
+            <select
+              value={sort}
+              onChange={(e) => setSort(e.target.value as "updated" | "severity")}
+              aria-label="Sort incidents"
+              className="rounded-md border border-slate-300 px-3 py-1.5 text-sm"
+            >
+              <option value="updated">Recently updated</option>
+              <option value="severity">Severity</option>
+            </select>
+          </label>
+        </div>
       </div>
 
       {state === "loading" && (
