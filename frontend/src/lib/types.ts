@@ -131,6 +131,18 @@ export interface Execution {
   completed_at: string | null;
 }
 
+/** Integration sync record (mirrors backend IntegrationSyncOut). */
+export interface IntegrationSync {
+  id: string;
+  incident_id: string;
+  integration: string;
+  sync_type: string;
+  status: "requested" | "completed" | "failed";
+  external_refs: Record<string, unknown>;
+  failure_reason: string | null;
+  created_at: string;
+}
+
 /** Post-incident report (mirrors backend ReportOut). */
 export interface Report {
   id: string;

@@ -74,6 +74,14 @@ class Settings(BaseSettings):
     )
     azure_openai_api_key: str = Field(default="", alias="AZURE_OPENAI_API_KEY")
 
+    # --- Salesforce integration (disabled by default) ---
+    salesforce_enabled: bool = Field(default=False, alias="SALESFORCE_ENABLED")
+    salesforce_instance_url: str = Field(default="", alias="SALESFORCE_INSTANCE_URL")
+    salesforce_client_id: str = Field(default="", alias="SALESFORCE_CLIENT_ID")
+    salesforce_client_secret: str = Field(
+        default="", alias="SALESFORCE_CLIENT_SECRET"
+    )
+
     @field_validator("cors_origins", mode="before")
     @classmethod
     def _split_cors_origins(cls, value: object) -> object:
