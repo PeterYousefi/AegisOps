@@ -2,6 +2,13 @@
 
 **Human-Governed AI Incident Response for Cloud Operations**
 
+[![CI](https://github.com/PeterYousefi/AegisOps/actions/workflows/ci.yml/badge.svg)](https://github.com/PeterYousefi/AegisOps/actions/workflows/ci.yml)
+![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)
+![Python 3.12](https://img.shields.io/badge/Python-3.12-3776AB?logo=python&logoColor=white)
+![FastAPI](https://img.shields.io/badge/FastAPI-009688?logo=fastapi&logoColor=white)
+![Next.js](https://img.shields.io/badge/Next.js-000000?logo=nextdotjs&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?logo=postgresql&logoColor=white)
+
 AegisOps is an Azure-ready, full-stack AI incident-response platform. It helps a
 cloud operator investigate a simulated incident by bringing together alerts,
 metrics, logs, deployment history, and operational runbooks; produces an
